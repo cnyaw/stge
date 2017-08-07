@@ -1,0 +1,335 @@
+
+script _test_move
+  fire(test_move1)
+end
+
+script test_move1
+  speed(100)
+  repeat(-1)
+    repeat(18)
+      direction(20,add)
+      fire()
+    end
+    sleep(0.5)
+  end
+end
+
+script _test_move2
+  fire(test_move2a)
+end
+
+script test_move2a
+  fork(test_move2b)
+  repeat(-1)
+    changex(0.5,10)
+    sleep(0.5)
+    changex(0.5,-10)
+    sleep(0.5)
+  end
+end
+
+script test_move2b
+  speed(100)
+  repeat(-1)
+    repeat(18)
+      direction(20,add)
+      fire()
+    end
+    sleep(0.5)
+  end
+end
+
+script _drop
+  changey(0,200,add)
+  direction(270)
+  repeat(-1)
+    speed(rand(140,300))
+    fire(drop2, rand(3,6))
+    sleep(0.02)
+  end
+end
+
+script drop2
+  changex(0, rand(-200,200), add)
+  changespeed($1,rand(-140,-300))
+  sleep($1)
+end
+
+script _color
+  repeat(-1)
+    direction(rand(360))
+    speed(rand(100,140))
+    userdata(rand(4))
+    fire()
+    sleep(0)
+  end
+end
+
+script _screw
+  fire(screw,$x,$y)
+end
+
+script screw
+  speed(100)
+  repeat(-1)
+    changex(0,$1+cos(6*$rep)*30)
+    changey(0,$2+sin(6*$rep)*30)
+    direction(6*$rep)
+    fire()
+    sleep(0)
+  end
+end
+
+script _aim
+  repeat(-1)
+    fork(aim1)
+    sleep(1)
+  end
+end
+
+script aim1
+  direction(-60, aim)
+  speed(100)
+  repeat(8)
+    direction(15, add)
+    fire(aim2)
+  end
+end
+
+script aim2
+  changespeed(0.75, 0)
+  sleep(0.75)
+  direction(0, aim)
+  speed(120)
+  fire()
+  repeat(5)
+    speed(18, add)
+    fire()
+  end
+  clear()
+end
+
+script _spin
+  speed(80)
+  repeat(-1)
+    direction(180, add)
+    fire(spin1)
+    direction(160, add)
+    fire(spin1)
+    sleep(0.075)
+  end
+end
+
+script spin1
+  sleep(rand(1, 2))
+  changespeed(1, 0)
+  sleep(1)
+  changedirection(0, 90)
+  changespeed(1, rand(120, 200))
+  sleep(1)
+end
+
+script _rocket
+  speed(80)
+  repeat(-1)
+    direction(180, add)
+    fire(rocket1)
+    sleep(0.2)
+  end
+end
+
+script rocket1
+  repeat(-1)
+    direction(90 - 25 + rand() * 50)
+    fire()
+    sleep(0.2)
+    direction(-90 - 25 + rand() * 50)
+    fire()
+    sleep(0.2)
+  end
+end
+
+script _3d
+  repeat(-1)
+    speed(60)
+    repeat(3)
+      direction(rand(-10,10), aim)
+      fire(x3d1)
+      sleep(0.4)
+    end
+    sleep(8)
+  end
+end
+
+script x3d1
+  speed(125)
+  changedirection(0, rand(30)-15, add)
+  repeat(-1)
+    sleep(0.02)
+    direction(13, add)
+    fire()
+  end
+end
+
+script _ring
+  speed(0)
+  repeat(-1)
+    direction(0)
+    fire(ring1)
+    direction(120)
+    fire(ring1)
+    direction(240)
+    fire(ring1)
+    sleep(14)
+  end
+end
+
+script ring1
+  changespeed(4, 300)
+  changedirection(10, 1200, add)
+  speed(80)
+  repeat(-1)
+    direction(90, obj)
+    fire()
+    direction(-90, obj)
+    fire()
+    sleep(0.1)
+  end
+end
+
+script _circle
+  speed(60)
+  repeat(-1)
+    fire(circle1, 36*$rep, rand(3))
+    sleep(0.1)
+  end
+end
+
+script circle1
+  changedirection(0, $1)
+  sleep(0.1)
+  speed(180 + 20 * $2)
+  repeat(8)
+    direction(45, add)
+    fire(circle2, $1)
+  end
+  clear()
+end
+
+script circle2
+  sleep(0.2)
+  direction($1)
+  fire()
+  clear()
+end
+
+script _wave
+  changey(0,-100,add)
+  repeat(-1)
+    call(wave1)
+  end
+end
+
+script wave1
+  speed(60)
+  direction(160)
+  repeat(12)
+    direction(-12, add)
+    fire(wave2)
+    sleep(0.03)
+  end
+  sleep(0.5)
+  direction(20)
+  repeat(12)
+    direction(12, add)
+    fire(wave2)
+    sleep(0.03)
+  end
+  sleep(0.5)
+end
+
+script wave2
+  speed(0)
+  repeat(10)
+    direction(1, add)
+    fire(wave3, 60 + 12 * $rep, 0.2 + 0.2 * $rep)
+  end
+  clear()
+end
+
+script wave3
+  changespeed($2, $1)
+  sleep($2)
+end
+
+script _luna
+  fork(luna1, 0, 10)
+  fork(luna1, 90, 10)
+  fork(luna1, 180, 10)
+  fork(luna1, 270, 10)
+  fork(luna2, 0, -12)
+  fork(luna2, 90, -12)
+  fork(luna2, 180, -12)
+  fork(luna2, 270, -12)
+end
+
+script luna1
+  direction($1)
+  speed(120)
+  repeat(-1)
+    direction($2, add)
+    fire()
+    sleep(0.075)
+  end
+end
+
+script luna2
+  direction($1)
+  speed(80)
+  repeat(-1)
+    direction($2, add)
+    fire()
+    sleep(0.075)
+  end
+end
+
+script _rain
+  changey(0,-200)
+  repeat(-1)
+    fire(rain)
+    sleep(0.02)
+  end
+end
+
+script rain
+  changespeed(0,rand(80,150))
+  changedirection(0,90)  
+  changex(0, rand(-200,200), add)
+end
+
+script _pon
+  speed(100)
+  repeat(-1)
+    direction(10,add)
+    fire(pon)
+    sleep(0)
+  end
+end
+
+script pon
+  sleep(rand(1,2))
+  option(rand(40))
+    fork(pon2)
+  end
+end
+
+script pon2
+  direction(rand(360))
+  speed(100)
+  repeat(12)
+    direction(30,add)
+    fire()
+  end
+  clear()
+end
+
