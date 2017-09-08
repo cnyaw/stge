@@ -95,66 +95,29 @@ public:
         break;
 
       case Script::FORK:
-        ostream
-          << "    "
-          << tag
-          << ".push_back(Script(Script::FORK, \""
-          << its->param[0].exp
-          << "\", \""
-          << its->param[1].exp
-          << "\", \""
-          << its->param[2].exp
-          << "\", \""
-          << its->param[3].exp
-          << "\", \""
-          << its->param[4].exp
-          << "\", \""
-          << its->param[5].exp
-          << "\", \""
-          << its->param[6].exp
-          << "\"));\n";
-        break;
-
       case Script::CALL:
-        ostream
-          << "    "
-          << tag
-          << ".push_back(Script(Script::CALL, \""
-          << its->param[0].exp
-          << "\", \""
-          << its->param[1].exp
-          << "\", \""
-          << its->param[2].exp
-          << "\", \""
-          << its->param[3].exp
-          << "\", \""
-          << its->param[4].exp
-          << "\", \""
-          << its->param[5].exp
-          << "\", \""
-          << its->param[6].exp
-          << "\"));\n";
-        break;
-
       case Script::FIRE:
-        ostream
-          << "    "
-          << tag
-          << ".push_back(Script(Script::FIRE, \""
-          << its->param[0].exp
-          << "\", \""
-          << its->param[1].exp
-          << "\", \""
-          << its->param[2].exp
-          << "\", \""
-          << its->param[3].exp
-          << "\", \""
-          << its->param[4].exp
-          << "\", \""
-          << its->param[5].exp
-          << "\", \""
-          << its->param[6].exp
-          << "\"));\n";
+        {
+          static const char* scmd[] = {"FORK", "CALL", "FIRE"};
+          ostream
+            << "    "
+            << tag
+            << ".push_back(Script(Script::" << scmd[its->type - Script::FORK] << ", \""
+            << its->param[0].exp
+            << "\", \""
+            << its->param[1].exp
+            << "\", \""
+            << its->param[2].exp
+            << "\", \""
+            << its->param[3].exp
+            << "\", \""
+            << its->param[4].exp
+            << "\", \""
+            << its->param[5].exp
+            << "\", \""
+            << its->param[6].exp
+            << "\"));\n";
+        }
         break;
 
       case Script::SLEEP:
