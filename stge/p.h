@@ -22,14 +22,6 @@ public:
   {
   }
 
-  Param(char const* e) : bConst(false), value(.0f), exp(e)
-  {
-    if (isConst()) {
-      bConst = true;
-      value = Expression(exp, Expression::Context()).eval();
-    }
-  }
-
   Param(std::string const& e) : bConst(false), value(.0f), exp(e)
   {
     if (isConst()) {
