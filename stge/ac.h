@@ -272,57 +272,7 @@ public:
       case Script::CHANGESPEED:
       case Script::CHANGEX:
       case Script::CHANGEY:
-        {
-          int idx = sc.curr().type - Script::CHANGEDIRECTION;
-
-          float term_ = sc.curr().param[0](ctx);
-          float value_ = sc.curr().param[1](ctx), value;
-          int p = (int)sc.curr().param[2](ctx);
-
-          switch (p)
-          {
-          case Script::AIM:             // Only valid for changedirection.
-            {
-              float x = player.x - *ctx.val[Expression::X];
-              float y = player.y - *ctx.val[Expression::Y];
-              float a2 = Math().atan2(y, x);
-              value = fmod(360000.0f + a2 + value_, 360.0f);
-
-              //
-              // Find smallest angle.
-              //
-
-              if (std::abs(value - *ctx.val[Expression::DIRECTION]) >
-                  std::abs(*ctx.val[Expression::DIRECTION] - value + 360.0f)) {
-                value -= 360.0f;
-              }
-            }
-            break;
-
-          case Script::ADD:
-            value = *val[idx] + value_;
-            break;
-
-          case Script::OBJ:
-            value = *ctx.val[idx] + value_;
-            break;
-
-          default:
-            value = value_;
-            break;
-          }
-
-          if (.0f < term_) {
-            durations[idx] = term_;
-            totals[idx] = value;
-            amounts[idx] = (value - *ctx.val[idx]) / term_;
-            target[idx] = ctx.val[idx];
-          } else {
-            *ctx.val[idx] = value;
-          }
-
-          sc.next();
-        }
+        updateChangeVals_i(player);
         break;
 
       case Script::CLEAR:
@@ -352,6 +302,60 @@ public:
     //
 
     return !sc.end();
+  }
+
+  template<class PlayerT>
+  void updateChangeVals_i(PlayerT& player)
+  {
+    int idx = sc.curr().type - Script::CHANGEDIRECTION;
+
+    float term_ = sc.curr().param[0](ctx);
+    float value_ = sc.curr().param[1](ctx), value;
+    int p = (int)sc.curr().param[2](ctx);
+
+    switch (p)
+    {
+    case Script::AIM:             // Only valid for changedirection.
+      {
+        float x = player.x - *ctx.val[Expression::X];
+        float y = player.y - *ctx.val[Expression::Y];
+        float a2 = Math().atan2(y, x);
+        value = fmod(360000.0f + a2 + value_, 360.0f);
+
+        //
+        // Find smallest angle.
+        //
+
+        if (std::abs(value - *ctx.val[Expression::DIRECTION]) >
+            std::abs(*ctx.val[Expression::DIRECTION] - value + 360.0f)) {
+          value -= 360.0f;
+        }
+      }
+      break;
+
+    case Script::ADD:
+      value = *val[idx] + value_;
+      break;
+
+    case Script::OBJ:
+      value = *ctx.val[idx] + value_;
+      break;
+
+    default:
+      value = value_;
+      break;
+    }
+
+    if (.0f < term_) {
+      durations[idx] = term_;
+      totals[idx] = value;
+      amounts[idx] = (value - *ctx.val[idx]) / term_;
+      target[idx] = ctx.val[idx];
+    } else {
+      *ctx.val[idx] = value;
+    }
+
+    sc.next();
   }
 
   template<class ObjectManagerT>
