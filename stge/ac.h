@@ -122,21 +122,7 @@ public:
     // Progressive changes.
     //
 
-    for (int i = 0; i < 4; ++i) {
-      if (.0f < durations[i]) {
-        durations[i] -= fElapsed;
-        *target[i] += amounts[i] * fElapsed;
-        if (.0f < amounts[i]) {
-          if (*target[i] > totals[i]) {
-            *target[i] = totals[i];
-          }
-        } else {
-          if (*target[i] < totals[i]) {
-            *target[i] = totals[i];
-          }
-        }
-      }
-    }
+    updateProgressiveChanges_i(fElapsed);
 
     //
     // Is still pending?
@@ -274,6 +260,25 @@ public:
     return !sc.end();
   }
 
+  void updateProgressiveChanges_i(float fElapsed)
+  {
+    for (int i = 0; i < 4; ++i) {
+      if (.0f < durations[i]) {
+        durations[i] -= fElapsed;
+        *target[i] += amounts[i] * fElapsed;
+        if (.0f < amounts[i]) {
+          if (*target[i] > totals[i]) {
+            *target[i] = totals[i];
+          }
+        } else {
+          if (*target[i] < totals[i]) {
+            *target[i] = totals[i];
+          }
+        }
+      }
+    }
+  }
+
   template<class PlayerT>
   void updateDirSpeed_i(PlayerT& player)
   {
@@ -284,7 +289,7 @@ public:
 
     switch (p)
     {
-    case Script::AIM:             // Only valid for direction.
+    case Script::AIM:                   // Only valid for direction.
       {
         float x = player.x - *ctx.val[Expression::X];
         float y =player.y - *ctx.val[Expression::Y];
@@ -319,7 +324,7 @@ public:
 
     switch (p)
     {
-    case Script::AIM:             // Only valid for changedirection.
+    case Script::AIM:                   // Only valid for changedirection.
       {
         float x = player.x - *ctx.val[Expression::X];
         float y = player.y - *ctx.val[Expression::Y];
