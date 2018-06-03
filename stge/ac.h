@@ -173,44 +173,10 @@ public:
 
       case Script::FIRE:
         {
-          int idObj_ = om.objects.alloc();
-          if (-1 == idObj_) {
-            return true;
+          bool ret;
+          if (updateFire_i(fElapsed, om, player, ret)) {
+            return ret;
           }
-
-          ObjectT &o = om.objects[idObj_];
-          o.set(
-              *ctx.val[Expression::X], *ctx.val[Expression::Y],
-              direction, speed,
-              user);
-
-          if (!o.init(om, id, idObj_)) {
-            om.objects.free(idObj_);
-            return true;
-          }
-
-          if (!om.objects.isUsed(idObj_)) { // Been killed in init?
-            return true;
-          }
-
-          if (sc.curr().param[0].exp.empty()) {
-            sc.next();
-            break;
-          }
-
-          int idAction_ = -1;
-          if (!fork(om, idObj_, &idAction_)) {
-            return false;
-          }
-
-          if (-1 == idAction_) {        // Fork not success, wait next chance.
-            om.objects.free(idObj_);
-            return true;
-          }
-
-          o.idAction = idAction_;
-
-          (void)om.actions[idAction_].update(fElapsed, om, player);
         }
         break;
 
@@ -277,6 +243,53 @@ public:
         }
       }
     }
+  }
+
+  template<class ObjectManagerT, class PlayerT>
+  bool updateFire_i(float fElapsed, ObjectManagerT& om, PlayerT& player, bool &ret)
+  {
+    int idObj_ = om.objects.alloc();
+    if (-1 == idObj_) {
+      ret = true;
+      return true;
+    }
+
+    ObjectT &o = om.objects[idObj_];
+    o.set(*ctx.val[Expression::X], *ctx.val[Expression::Y], direction, speed, user);
+
+    if (!o.init(om, id, idObj_)) {
+      om.objects.free(idObj_);
+      ret = true;
+      return true;
+    }
+
+    if (!om.objects.isUsed(idObj_)) {   // Been killed in init?
+      ret = true;
+      return true;
+    }
+
+    if (sc.curr().param[0].exp.empty()) {
+      sc.next();
+      return false;
+    }
+
+    int idAction_ = -1;
+    if (!fork(om, idObj_, &idAction_)) {
+      ret = false;
+      return true;
+    }
+
+    if (-1 == idAction_) {              // Fork not success, wait next chance.
+      om.objects.free(idObj_);
+      ret = true;
+      return true;
+    }
+
+    o.idAction = idAction_;
+
+    (void)om.actions[idAction_].update(fElapsed, om, player);
+
+    return false;
   }
 
   template<class PlayerT>
