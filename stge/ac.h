@@ -235,37 +235,7 @@ public:
 
       case Script::DIRECTION:
       case Script::SPEED:
-        {
-          int idx = sc.curr().type - Script::DIRECTION;
-
-          float value = sc.curr().param[0](ctx);
-          int p = (int)sc.curr().param[1](ctx);
-
-          switch (p)
-          {
-          case Script::AIM:             // Only valid for direction.
-            {
-              float x = player.x - *ctx.val[Expression::X];
-              float y =player.y - *ctx.val[Expression::Y];
-              *val[idx] = Math().atan2(y, x) + value;
-            }
-            break;
-
-          case Script::ADD:
-            *val[idx] += value;
-            break;
-
-          case Script::OBJ:
-            *val[idx] = *ctx.val[idx] + value;
-            break;
-
-          default:
-            *val[idx] = value;
-            break;
-          }
-
-          sc.next();
-        }
+        updateDirSpeed_i(player);
         break;
 
       case Script::CHANGEDIRECTION:
@@ -302,6 +272,40 @@ public:
     //
 
     return !sc.end();
+  }
+
+  template<class PlayerT>
+  void updateDirSpeed_i(PlayerT& player)
+  {
+    int idx = sc.curr().type - Script::DIRECTION;
+
+    float value = sc.curr().param[0](ctx);
+    int p = (int)sc.curr().param[1](ctx);
+
+    switch (p)
+    {
+    case Script::AIM:             // Only valid for direction.
+      {
+        float x = player.x - *ctx.val[Expression::X];
+        float y =player.y - *ctx.val[Expression::Y];
+        *val[idx] = Math().atan2(y, x) + value;
+      }
+      break;
+
+    case Script::ADD:
+      *val[idx] += value;
+      break;
+
+    case Script::OBJ:
+      *val[idx] = *ctx.val[idx] + value;
+      break;
+
+    default:
+      *val[idx] = value;
+      break;
+    }
+
+    sc.next();
   }
 
   template<class PlayerT>
