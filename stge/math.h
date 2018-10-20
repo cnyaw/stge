@@ -18,7 +18,7 @@ public:
   {
     float table[360];
 
-    Table(bool bCos)
+    explicit Table(bool bCos)
     {
       const float PI = 3.1415926f;
       for (int i = 0; i < 360; i++) {
