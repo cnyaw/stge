@@ -128,11 +128,7 @@ public:
     COMMAND_ID_HANDLER_EX(ID_FILE_COMPLIE, OnComplie)
     COMMAND_ID_HANDLER_EX(ID_FILE_GENRATE, OnGenerateCode)
     COMMAND_ID_HANDLER_EX(ID_APP_EXIT, OnFileExit)
-    COMMAND_ID_HANDLER_EX(ID_EDIT_CUT, OnEditCut)
-    COMMAND_ID_HANDLER_EX(ID_EDIT_COPY, OnEditCopy)
-    COMMAND_ID_HANDLER_EX(ID_EDIT_PASTE, OnEditPaste)
-    COMMAND_ID_HANDLER_EX(ID_EDIT_SELECT_ALL, OnEditSelectAll)
-    COMMAND_ID_HANDLER_EX(ID_EDIT_UNDO, OnEditUndo)
+    CHAIN_MSG_MAP_ALT_MEMBER(mSource, 1)
     COMMAND_ID_HANDLER_EX(ID_VIEW_TOOLBAR, OnViewToolBar)
     COMMAND_ID_HANDLER_EX(ID_VIEW_STATUS_BAR, OnViewStatusBar)
     COMMAND_ID_HANDLER_EX(ID_APP_ABOUT, OnAppAbout)
@@ -383,31 +379,6 @@ public:
 
     mView.mScm = scm;
   } // OnComplie
-
-  void OnEditCut(UINT uNotifyCode, int nID, CWindow wndCtl)
-  {
-    mSource.Cut();
-  } // OnEditCut
-
-  void OnEditCopy(UINT uNotifyCode, int nID, CWindow wndCtl)
-  {
-    mSource.Copy();
-  } // OnEditCopy
-
-  void OnEditPaste(UINT uNotifyCode, int nID, CWindow wndCtl)
-  {
-    mSource.Paste();
-  } // OnEditPaste
-
-  void OnEditSelectAll(UINT uNotifyCode, int nID, CWindow wndCtl)
-  {
-    mSource.SetSelAll();
-  } // OnEditSelectAll
-
-  void OnEditUndo(UINT uNotifyCode, int nID, CWindow wndCtl)
-  {
-    mSource.Undo();
-  } // OnEditUndo
 
   void OnFileExit(UINT uNotifyCode, int nID, CWindow wndCtl)
   {

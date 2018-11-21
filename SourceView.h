@@ -19,6 +19,7 @@ public:
   BEGIN_MSG_MAP_EX(CSourceView)
     MSG_WM_CREATE(OnCreate)
     MSG_WM_SETCURSOR(OnSetCursor)
+  ALT_MSG_MAP(1)
     CHAIN_MSG_MAP_ALT(CEditCommands<CSourceView>, 1)
   END_MSG_MAP()
 
