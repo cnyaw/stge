@@ -54,6 +54,14 @@ public:
 
 private:
 
+  float evalCos()
+  {
+    match('(');
+    float r = expression();
+    match(')');
+    return Math().cos(r);
+  }
+
   float evalName()
   {
     std::string name = getName();
@@ -74,40 +82,13 @@ private:
     switch (idx)
     {
     case 0:                             // rand.
-      {
-        match('(');
-
-        if (isMatch(')')) {
-          return rand() / (float)RAND_MAX;
-        }
-
-        float r1 = expression(), r2 = 0;
-        bool b = isMatch(',');
-
-        if (b) {
-          r2 = expression();
-        }
-
-        match(')');
-
-        return b ? sw2::rangeRand(r1,r2) : sw2::rangeRand(.0f,r1);
-      }
+      return evalRand();
 
     case 1:                             // sin.
-      {
-        match ('(');
-        float r = expression();
-        match(')');
-        return Math ().sin(r);
-      }
+      return evalSin();
 
     case 2:                             // cos.
-      {
-        match('(');
-        float r = expression();
-        match(')');
-        return Math().cos(r);
-      }
+      return evalCos();
 
     case 3:                             // param 1.
     case 4:                             // param 2.
@@ -137,6 +118,34 @@ private:
     }
 
     return 0.0f;
+  }
+
+  float evalRand()
+  {
+    match('(');
+
+    if (isMatch(')')) {
+      return rand() / (float)RAND_MAX;
+    }
+
+    float r1 = expression(), r2 = 0;
+    bool b = isMatch(',');
+
+    if (b) {
+      r2 = expression();
+    }
+
+    match(')');
+
+    return b ? sw2::rangeRand(r1,r2) : sw2::rangeRand(.0f,r1);
+  }
+
+  float evalSin()
+  {
+    match ('(');
+    float r = expression();
+    match(')');
+    return Math ().sin(r);
   }
 
   float expression()
