@@ -25,7 +25,7 @@ public:
     std::list<iter> curStack;
     int count, repeat;
     std::list<int> repStack;
-    Expression::Context const* ctx;
+    Context const* ctx;
 
     const Script& curr() const
     {
@@ -123,7 +123,7 @@ public:
       }
     }
 
-    void set(const Script* sc_, Expression::Context const* c)
+    void set(const Script* sc_, Context const* c)
     {
       sc = sc_;
       ctx = c;

@@ -33,6 +33,23 @@
 // stge.
 //
 
+enum STGE_CONTEXT_VALUE
+{
+  DIRECTION = 0,
+  SPEED,
+  X,
+  Y,
+  NUM_VAL
+};
+
+struct Context
+{
+  float const *param;
+  int *repeat;
+  float *val[NUM_VAL];                  // dir, spd, x, y.
+  int w, h;                             // Window w/h.
+};
+
 #include "math.h"
 #include "exp.h"
 #include "p.h"

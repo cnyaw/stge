@@ -62,10 +62,10 @@ public:
       y += fElapsed * speed * Math().sin(direction);
     } else {
       typename BulletSystemT::ActionT &a = bs.actions[idAction];
-      if (.0f >= a.durations[Expression::X]) {
+      if (.0f >= a.durations[X]) {
         x += fElapsed * speed * Math().cos(direction);
       }
-      if (.0f >= a.durations[Expression::Y]) {
+      if (.0f >= a.durations[Y]) {
         y += fElapsed * speed * Math().sin(direction);
       }
     }

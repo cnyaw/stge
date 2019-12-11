@@ -26,7 +26,7 @@ public:
   {
     if (isConst()) {
       bConst = true;
-      value = Expression(exp, Expression::Context()).eval();
+      value = Expression(exp, Context()).eval();
     }
   }
 
@@ -52,7 +52,7 @@ public:
     return *this;
   }
 
-  float operator()(Expression::Context const& ctx) const
+  float operator()(Context const& ctx) const
   {
     return bConst ? value : Expression(exp, ctx).eval();
   }

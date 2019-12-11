@@ -13,21 +13,6 @@ namespace stge {
 class Expression
 {
 public:
-  enum CONSTANT
-  {
-    DIRECTION = 0,
-    SPEED,
-    X,
-    Y
-  };
-
-  struct Context
-  {
-    float const *param;
-    int *repeat;
-    float *val[4];                      // dir, spd, x, y.
-    int w, h;                           // Window w/h.
-  };
 
   class Exception : public std::exception
   {
@@ -85,7 +70,8 @@ private:
 
     const int numFunc = sizeof(funcName) / sizeof(funcName[0]);
 
-    switch (std::find(funcName, funcName + numFunc, name) - funcName)
+    int idx = std::find(funcName, funcName + numFunc, name) - funcName;
+    switch (idx)
     {
     case 0:                             // rand.
       {
@@ -124,37 +110,21 @@ private:
       }
 
     case 3:                             // param 1.
-      return ctx.param[0];
-
     case 4:                             // param 2.
-      return ctx.param[1];
-
     case 5:                             // param 3.
-      return ctx.param[2];
-
     case 6:                             // param 4.
-      return ctx.param[3];
-
     case 7:                             // param 5.
-      return ctx.param[4];
-
     case 8:                             // param 6.
-      return ctx.param[5];
+      return ctx.param[idx - 3];
 
     case 9:                             // Repeat count.
       return (float)*ctx.repeat;
 
     case 10:                            // Direction.
-      return *ctx.val[DIRECTION];
-
     case 11:                            // Speed.
-      return *ctx.val[SPEED];
-
     case 12:                            // x.
-      return *ctx.val[X];
-
     case 13:                            // y.
-      return *ctx.val[Y];
+      return *ctx.val[idx - 10];
 
     case 14:                            // Window width.
       return (float)ctx.w;

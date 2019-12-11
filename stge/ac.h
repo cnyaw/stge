@@ -27,10 +27,10 @@ public:
   float direction;
   float speed;
 
-  Expression::Context ctx;
-  float *val[4];                        // dir, speed, x, y.
+  Context ctx;
+  float *val[NUM_VAL];                   // dir, speed, x, y.
 
-  float *target[4], durations[4], totals[4], amounts[4];
+  float *target[NUM_VAL], durations[NUM_VAL], totals[NUM_VAL], amounts[NUM_VAL];
 
   Script::Cursor sc;
   float wait;
@@ -57,24 +57,24 @@ public:
 
     ctx.param = param;
     if (pobj) {
-      ctx.val[Expression::DIRECTION] = &pobj->direction;
-      ctx.val[Expression::SPEED] = &pobj->speed;
-      ctx.val[Expression::X] = &pobj->x;
-      ctx.val[Expression::Y] = &pobj->y;
+      ctx.val[DIRECTION] = &pobj->direction;
+      ctx.val[SPEED] = &pobj->speed;
+      ctx.val[X] = &pobj->x;
+      ctx.val[Y] = &pobj->y;
     } else {
-      ctx.val[Expression::DIRECTION] = &direction;
-      ctx.val[Expression::SPEED] = &speed;
-      ctx.val[Expression::X] = &x;
-      ctx.val[Expression::Y] = &y;
+      ctx.val[DIRECTION] = &direction;
+      ctx.val[SPEED] = &speed;
+      ctx.val[X] = &x;
+      ctx.val[Y] = &y;
     }
 
     ctx.w = ObjectManagerT::getWindowWidth();
     ctx.h = ObjectManagerT::getWindowHeight();
 
-    val[Expression::DIRECTION] = &direction;
-    val[Expression::SPEED] = &speed;
-    val[Expression::X] = &x;
-    val[Expression::Y] = &y;
+    val[DIRECTION] = &direction;
+    val[SPEED] = &speed;
+    val[X] = &x;
+    val[Y] = &y;
 
     sc.set(sc_, &ctx);
     ctx.repeat = &sc.repeat;
@@ -255,7 +255,7 @@ public:
     }
 
     ObjectT &o = om.objects[idObj_];
-    o.set(*ctx.val[Expression::X], *ctx.val[Expression::Y], direction, speed, user);
+    o.set(*ctx.val[X], *ctx.val[Y], direction, speed, user);
 
     if (!o.init(om, id, idObj_)) {
       om.objects.free(idObj_);
@@ -304,8 +304,8 @@ public:
     {
     case Script::AIM:                   // Only valid for direction.
       {
-        float x = player.x - *ctx.val[Expression::X];
-        float y =player.y - *ctx.val[Expression::Y];
+        float x = player.x - *ctx.val[X];
+        float y =player.y - *ctx.val[Y];
         *val[idx] = Math().atan2(y, x) + value;
       }
       break;
@@ -339,8 +339,8 @@ public:
     {
     case Script::AIM:                   // Only valid for changedirection.
       {
-        float x = player.x - *ctx.val[Expression::X];
-        float y = player.y - *ctx.val[Expression::Y];
+        float x = player.x - *ctx.val[X];
+        float y = player.y - *ctx.val[Y];
         float a2 = Math().atan2(y, x);
         value = fmod(360000.0f + a2 + value_, 360.0f);
 
@@ -348,8 +348,8 @@ public:
         // Find smallest angle.
         //
 
-        if (std::abs(value - *ctx.val[Expression::DIRECTION]) >
-            std::abs(*ctx.val[Expression::DIRECTION] - value + 360.0f)) {
+        if (std::abs(value - *ctx.val[DIRECTION]) >
+            std::abs(*ctx.val[DIRECTION] - value + 360.0f)) {
           value -= 360.0f;
         }
       }
@@ -411,7 +411,7 @@ public:
       a.set(
          om, idAction,
          idObj_,
-         *ctx.val[Expression::X], *ctx.val[Expression::Y],
+         *ctx.val[X], *ctx.val[Y],
          direction, speed,
          &itAction->second);
 
