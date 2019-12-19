@@ -78,7 +78,7 @@ private:
 
     const int numFunc = sizeof(funcName) / sizeof(funcName[0]);
 
-    int idx = std::find(funcName, funcName + numFunc, name) - funcName;
+    int idx = (int)(std::find(funcName, funcName + numFunc, name) - funcName);
     switch (idx)
     {
     case 0:                             // rand.
