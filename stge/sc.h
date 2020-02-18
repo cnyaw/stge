@@ -22,10 +22,19 @@ public:
 
     const Script* sc;
     iter cursor;
-    std::list<iter> curStack;
     int count, repeat;
-    std::list<int> repStack;
     Context const* ctx;
+
+    struct Frame
+    {
+      iter cursor;
+      int count, repeat;
+      Frame(iter i, int c, int r) : cursor(i), count(c), repeat(r)
+      {
+      }
+    };
+
+    std::list<Frame> stack;
 
     const Script& curr() const
     {
@@ -37,10 +46,10 @@ public:
       if (0 == sc) {
         return true;
       } else {
-        if (curStack.empty()) {
+        if (stack.empty()) {
           return sc->sc.end() == cursor;
         } else {
-          return curStack.back()->sc.end() == cursor;
+          return stack.back().cursor->sc.end() == cursor;
         }
       }
     }
@@ -53,21 +62,17 @@ public:
       {
       case Script::ROOT:
         {
-          repStack.push_back(count);
-          repStack.push_back(repeat);
+          stack.push_back(Frame(cursor, count, repeat));
           count = repeat = 0;
-          curStack.push_back(cursor);
           cursor = curr().sc.begin();
         }
         return;
 
       case Script::REPEAT:
         {
-          repStack.push_back(count);
-          repStack.push_back(repeat);
+          stack.push_back(Frame(cursor, count, repeat));
           count = (int)curr().param[0](*ctx);
           repeat = 0;
-          curStack.push_back(cursor);
           cursor = curr().sc.begin();
         }
         return;
@@ -76,13 +81,9 @@ public:
         {
           int option = (int)curr().param[0](*ctx);
           if (0 <= option && (int)curr().sc.size() > option) {
-
-            repStack.push_back(count);
-            repStack.push_back(repeat);
+            stack.push_back(Frame(cursor, count, repeat));
             count = repeat = 0;
-            curStack.push_back(cursor);
             cursor = curr().sc.begin();
-
             for (int i = 0; i < option; i++) {
               ++cursor;
             }
@@ -90,32 +91,31 @@ public:
             break;
           }
         }
-
         return;
       }
 
       ++cursor;
 
-      while (!curStack.empty() &&
-             (curStack.back()->sc.end() == cursor ||
-              Script::OPTION == curStack.back()->type)) {
-
-        switch (curStack.back()->type)
+      while (!stack.empty()) {
+        const iter stkCursor = stack.back().cursor;
+        if (stkCursor->sc.end() != cursor && Script::OPTION != stkCursor->type) {
+          break;
+        }
+        switch (stkCursor->type)
         {
         case Script::ROOT:
         case Script::REPEAT:
         case Script::OPTION:
-          if (Script::REPEAT == curStack.back()->type &&
+          if (Script::REPEAT == stkCursor->type &&
               (-1 == count || 0 < --count)) {
             ++repeat;
-            cursor = curStack.back()->sc.begin();
+            cursor = stkCursor->sc.begin();
           } else {
-            repeat = repStack.back();
-            repStack.pop_back();
-            count = repStack.back();
-            repStack.pop_back();
-            cursor = curStack.back();
-            curStack.pop_back();
+            Frame f = stack.back();
+            stack.pop_back();
+            cursor = f.cursor;
+            count = f.count;
+            repeat = f.repeat;
             ++cursor;
           }
           break;
@@ -127,14 +127,11 @@ public:
     {
       sc = sc_;
       ctx = c;
-
       if (sc) {
         cursor = sc->sc.begin();
       }
-
       count = repeat = 0;
-      curStack.clear();
-      repStack.clear();
+      stack.clear();
     }
   };
 
