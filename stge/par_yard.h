@@ -53,10 +53,9 @@ public:
     return i;
   }
 
-  static void trim(std::string& str, std::string const& chrTrim = " \t\r\n;")
+  static void trim(std::string& str)
   {
-    str.erase(0, str.find_first_not_of(chrTrim));
-    str.erase(str.find_last_not_of(chrTrim) + 1);
+    str.erase(std::remove_if(str.begin(), str.end(), isspace), str.end());
   }
 };
 
