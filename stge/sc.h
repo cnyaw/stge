@@ -79,14 +79,29 @@ public:
 
       case Script::OPTION:
         {
+          int sz = (int)curr().sc.size();
+          int szOpt = sz;
+          if (2 <= sz) {
+            iter c = curr().sc.end();
+            c--;                        // Else command.
+            c--;                        // Else tag.
+            if (Script::ELSE == c->type) {
+              szOpt -= 2;
+            }
+          }
           int option = (int)curr().param[0](*ctx);
-          if (0 <= option && (int)curr().sc.size() > option) {
+          if (0 <= option && szOpt > option) {
             stack.push_back(Frame(cursor, count, repeat));
             count = repeat = 0;
             cursor = curr().sc.begin();
             for (int i = 0; i < option; i++) {
               ++cursor;
             }
+          } else if (szOpt != sz) {     // Has else condition.
+            stack.push_back(Frame(cursor, count, repeat));
+            count = repeat = 0;
+            cursor = curr().sc.end();
+            cursor--;
           } else {
             break;
           }
@@ -146,6 +161,7 @@ public:
     ROOT,
     REPEAT,
     OPTION,
+    ELSE,
     FORK,                               // Run in new action.
     CALL,                               // Call action.
     FIRE,

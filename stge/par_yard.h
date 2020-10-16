@@ -366,6 +366,7 @@ struct SCRIPT : Keyword<CharSeq<'s','c','r','i', 'p', 't'> > {};
 struct END : Keyword<CharSeq<'e', 'n', 'd'> > {};
 struct REPEAT : Keyword<CharSeq<'r', 'e', 'p', 'e', 'a', 't'> > {};
 struct OPTION : Keyword<CharSeq<'o', 'p', 't', 'i', 'o', 'n'> > {};
+struct ELSE : Keyword<CharSeq<'e', 'l', 's', 'e'> > {};
 struct FORK : Keyword<CharSeq<'f', 'o', 'r', 'k'> > {};
 struct CALL : Keyword<CharSeq<'c', 'a', 'l', 'l'> > {};
 struct FIRE : Keyword<CharSeq<'f', 'i', 'r', 'e'> > {};
@@ -422,7 +423,7 @@ struct Repeat : OpEnd<OpSetParam2<OpEndParam<BlockSeq<NoFailSeq<OpBlock<Script::
 {
 };
 
-struct Option : OpEnd<OpSetParam2<OpEndParam<BlockSeq<NoFailSeq<OpBlock<Script::OPTION, OPTION>, Paranthesized<OpNewParam<OpParam<Expr> > >, Star<Command> > > > > >
+struct Option : OpEnd<OpSetParam2<OpEndParam<BlockSeq<NoFailSeq<OpBlock<Script::OPTION, OPTION>, Paranthesized<OpNewParam<OpParam<Expr> > >, Seq<Star<Command>, Opt<Seq<OpCmd<Script::ELSE, ELSE>, Command> > > > > > > >
 {
 };
 
