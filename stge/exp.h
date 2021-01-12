@@ -137,7 +137,7 @@ private:
 
     match(')');
 
-    return b ? sw2::rangeRand(r1,r2) : sw2::rangeRand(.0f,r1);
+    return b ? sw2::Util::rangeRand(r1,r2) : sw2::Util::rangeRand(.0f,r1);
   }
 
   float evalSin()
