@@ -442,24 +442,22 @@ public:
 
   static bool parse(std::string const& filename, ScriptManager& scm)
   {
-    std::ifstream f(filename.c_str());
+    std::string s;
+    FILE *f = fopen(filename.c_str(), "rb");
     if (!f) {
       return false;
-    } else {
-      return parse(f, scm);
     }
+    fseek(f, 0, SEEK_END);
+    long len = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    s.resize(len);
+    fread((void*)s.data(), 1, len, f);
+    fclose(f);
+    return parseFromStream(s, scm);
   }
 
-  static bool parse(std::istream& istream, ScriptManager& scm)
+  static bool parseFromStream(const std::string &str, ScriptManager& scm)
   {
-    istream.unsetf(std::ios::skipws);
-
-    std::string str;
-    std::copy(
-           std::istream_iterator<char>(istream),
-           std::istream_iterator<char>(),
-           std::back_inserter(str));
-
     Context::inst().mScm = &scm;
     Context::inst().mLastError = "";
 

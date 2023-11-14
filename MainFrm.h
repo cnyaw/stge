@@ -312,7 +312,7 @@ public:
                           NULL,
                           NULL,
                           OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
-                          _T("Script Files(*.txt)\0*.*\0"));
+                          _T("Script Files(*.stge)\0*.*\0"));
             if (IDOK == dlg.DoModal()) {
               name = dlg.m_szFileName;
             } else {
@@ -365,7 +365,7 @@ public:
     mList.ResetContent();
 
     stge::ScriptManager scm;
-    if (!stge::Parser::parse(ss, scm)) {
+    if (!stge::Parser::parseFromStream(ss.str(), scm)) {
       CString s = stge::Parser::getLastError().c_str();
       MessageBox(s, _T("Error"), MB_OK|MB_ICONERROR);
       return;
@@ -411,7 +411,7 @@ public:
                   NULL,
                   NULL,
                   OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
-                  _T("Script Files(*.txt)\0*.*\0"));
+                  _T("Script Files(*.stge)\0*.*\0"));
     if (IDOK != dlg.DoModal()) {
       return;
     }
@@ -459,7 +459,7 @@ public:
                     NULL,
                     NULL,
                     OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
-                    _T("Script Files(*.txt)\0*.*\0"));
+                    _T("Script Files(*.stge)\0*.*\0"));
       if (IDOK == dlg.DoModal()) {
         name = dlg.m_szFileName;
       } else {
@@ -486,7 +486,7 @@ public:
                   NULL,
                   NULL,
                   OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
-                  _T("Script Files(*.txt)\0*.*\0"));
+                  _T("Script Files(*.stge)\0*.*\0"));
     if (IDOK != dlg.DoModal()) {
       return;
     }
@@ -576,18 +576,19 @@ public:
 
   bool LoadText(std::string const& fname)
   {
-    std::ifstream ifs(fname.c_str());
-    if (!ifs) {
+    std::string s;
+    FILE *f = fopen(fname.c_str(), "rb");
+    if (!f) {
       return false;
     }
+    fseek(f, 0, SEEK_END);
+    long len = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    s.resize(len);
+    fread((void*)s.data(), 1, len, f);
+    fclose(f);
 
-    std::stringstream ss;
-    std::string line;
-    while (std::getline(ifs, line)) {
-      ss << line << "\r\r\n";
-    }
-
-    mSource.SetWindowText(ss.str().c_str());
+    mSource.SetWindowText(s.c_str());
     mSource.SetModify(FALSE);
 
     return true;
@@ -600,13 +601,12 @@ public:
       return false;
     }
 
-    std::ofstream ofs(fname.c_str());
-    if (!ofs) {
-      return false;
+    FILE *f = fopen(fname.c_str(), "wt");
+    if (f) {
+      std::string s = ss.str();
+      fwrite(s.data(), s.size(), 1, f);
+      fclose(f);
     }
-
-    ofs << ss.rdbuf();
-    ofs.close();
 
     mSource.SetModify(FALSE);
     return true;

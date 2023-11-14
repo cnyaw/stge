@@ -12,15 +12,8 @@
 #undef CONST
 #endif
 
-#ifdef _MSC_VER
-# pragma warning(push)
-# pragma warning(disable:4267)
-#endif
 #include "include/yard.hpp"
 #include "grammars/yard_c_grammar.hpp"
-#ifdef _MSC_VER
-# pragma warning(pop)
-#endif
 
 using namespace yard;
 using namespace yard::text_grammar;
@@ -558,16 +551,8 @@ struct BasicParser : yard::BasicParser<char>
 
 struct Parser
 {
-  static bool parse(std::istream& istream, ScriptManager& scm)
+  static bool parseFromStream(const std::string &str, ScriptManager& scm)
   {
-    istream.unsetf(std::ios::skipws);
-
-    std::string str;
-    std::copy(
-           std::istream_iterator<char>(istream),
-           std::istream_iterator<char>(),
-           std::back_inserter(str));
-
     parser::Context::inst().mScm = &scm;
     parser::Context::inst().mCursor.clear();
     parser::Context::inst().mParam.clear();
@@ -588,12 +573,18 @@ struct Parser
 
   static bool parse(std::string const& filename, ScriptManager& scm)
   {
-    std::ifstream f(filename.c_str());
+    std::string s;
+    FILE *f = fopen(filename.c_str(), "rb");
     if (!f) {
       return false;
-    } else {
-      return parse(f, scm);
     }
+    fseek(f, 0, SEEK_END);
+    long len = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    s.resize(len);
+    fread((void*)s.data(), 1, len, f);
+    fclose(f);
+    return parseFromStream(s, scm);
   }
 
   static std::string getLastError()
