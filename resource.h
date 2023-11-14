@@ -6,7 +6,6 @@
 #define IDC_POINTER                     104
 #define IDR_MAINFRAME                   128
 #define IDB_BITMAP1                     201
-#define IDR_HTML1                       202
 #define ID_WINDOW_CLOSE                 32772
 #define ID_WINDOW_CLOSE_ALL             32773
 #define ID_FILE_COMPLIE                 32777
