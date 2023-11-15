@@ -443,16 +443,9 @@ public:
   static bool parse(std::string const& filename, ScriptManager& scm)
   {
     std::string s;
-    FILE *f = fopen(filename.c_str(), "rb");
-    if (!f) {
+    if (!sw2::Util::loadFileContent(filename.c_str(), s)) {
       return false;
     }
-    fseek(f, 0, SEEK_END);
-    long len = ftell(f);
-    fseek(f, 0, SEEK_SET);
-    s.resize(len);
-    fread((void*)s.data(), 1, len, f);
-    fclose(f);
     return parseFromStream(s, scm);
   }
 

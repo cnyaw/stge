@@ -577,16 +577,9 @@ public:
   bool LoadText(std::string const& fname)
   {
     std::string s;
-    FILE *f = fopen(fname.c_str(), "rb");
-    if (!f) {
+    if (!sw2::Util::loadFileContent(fname.c_str(), s)) {
       return false;
     }
-    fseek(f, 0, SEEK_END);
-    long len = ftell(f);
-    fseek(f, 0, SEEK_SET);
-    s.resize(len);
-    fread((void*)s.data(), 1, len, f);
-    fclose(f);
 
     mSource.SetWindowText(s.c_str());
     mSource.SetModify(FALSE);
