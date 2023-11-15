@@ -594,12 +594,7 @@ public:
       return false;
     }
 
-    FILE *f = fopen(fname.c_str(), "wt");
-    if (f) {
-      std::string s = ss.str();
-      fwrite(s.data(), s.size(), 1, f);
-      fclose(f);
-    }
+    sw2::Util::storeFileContent(fname.c_str(), ss.str());
 
     mSource.SetModify(FALSE);
     return true;

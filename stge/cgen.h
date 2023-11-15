@@ -19,19 +19,7 @@ public:
   static bool generate(std::string const& filename, ScriptManager const& scm)
   {
     std::stringstream ss;
-    if (!generateToStream(ss, scm)) {
-      return false;
-    }
-
-    FILE *f = fopen(filename.c_str(), "wt");
-    if (f) {
-      std::string s = ss.str();
-      fwrite(s.data(), s.size(), 1, f);
-      fclose(f);
-      return true;
-    } else {
-      return false;
-    }
+    return generateToStream(ss, scm) && sw2::Util::storeFileContent(filename.c_str(), ss.str());
   }
 
   static bool generateToStream(std::ostream& ostream, ScriptManager const& scm)
