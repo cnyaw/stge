@@ -575,6 +575,7 @@ struct Parser
   {
     std::string s;
     if (!sw2::Util::loadFileContent(filename.c_str(), s)) {
+      parser::Context::inst().mLastError = "Load file '" + filename + "' failed";
       return false;
     }
     return parseFromStream(s, scm);
