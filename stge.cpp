@@ -6,7 +6,6 @@
 #include "swGeometry.h"
 
 #include "stge/stge.h"
-//#include "stge/par.h"
 #include "stge/par_yard.h"
 #include "stge/cgen.h"
 

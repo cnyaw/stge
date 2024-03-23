@@ -332,10 +332,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\stge\par.h"
-				>
-			</File>
-			<File
 				RelativePath=".\stge\par_yard.h"
 				>
 			</File>
