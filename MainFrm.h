@@ -1,44 +1,6 @@
 
 #pragma once
 
-class CViewDecorate : public CWindowImpl<CViewDecorate>
-{
-public:
-  DECLARE_WND_CLASS_EX(NULL, 0, COLOR_BTNFACE)
-
-  enum { YOFFSET = 2 };
-
-  HWND mView;
-
-  BEGIN_MSG_MAP_EX(CMainFrame)
-    MSG_WM_SETFOCUS(OnSetFocus)
-    MSG_WM_SHOWWINDOW(OnShowWindow)
-    MSG_WM_SIZE(OnSize)
-  END_MSG_MAP()
-
-  void OnSetFocus(CWindow wndOld)
-  {
-    ::SetFocus(mView);
-  } // OnSetFocus
-
-  void OnShowWindow(BOOL bShow, UINT nStatus)
-  {
-    ::ShowWindow(mView, bShow ? SW_SHOW : SW_HIDE);
-  } // OnShowWindow
-
-  void OnSize(UINT nType, CSize size)
-  {
-    ::SetWindowPos(
-        mView,
-        NULL,
-        0,
-        YOFFSET,
-        size.cx,
-        size.cy - 2 * YOFFSET,
-        SWP_NOZORDER | SWP_NOACTIVATE);
-  } // OnSize
-};
-
 class CMainFrame :
   public CFrameWindowImpl<CMainFrame>,
   public CUpdateUI<CMainFrame>,
@@ -54,8 +16,6 @@ public:
   CTabView mTabView;
   CListBox mList;
 
-  CViewDecorate mD1, mD2;
-
   CStgeView mView;
   CSourceView mSource;
 
@@ -63,17 +23,6 @@ public:
 
   virtual BOOL PreTranslateMessage(MSG* pMsg)
   {
-    if (WM_MOUSEWHEEL == pMsg->message) {
-      POINT pt;
-      ::GetCursorPos(&pt);
-      ::SendMessage(
-          ::WindowFromPoint(pt),
-          WM_MOUSEWHEEL,
-          pMsg->wParam,
-          pMsg->lParam);
-      return TRUE;
-    }
-
     if (mTabView.PreTranslateMessage(pMsg)) {
       return TRUE;
     }
@@ -227,32 +176,22 @@ public:
     // Setup tab view(view,source).
     //
 
-    mD1.Create(
-          mTabView,
-          rcDefault,
-          NULL,
-          WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CLIPCHILDREN);
-    mD1.mView = mView.Create(
-                        mD1,
-                        rcDefault,
-                        NULL,
-                        WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-                        WS_EX_STATICEDGE);
-    mTabView.AddPage(mD1.m_hWnd, _T("View"));
+    mView.Create(
+            mTabView,
+            rcDefault,
+            NULL,
+            WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+            WS_EX_STATICEDGE);
+    mTabView.AddPage(mView, _T("View"));
 
-    mD2.Create(
-          mTabView,
-          rcDefault,
-          NULL,
-          WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-    mD2.mView = mSource.Create(
-                          mD2,
-                          rcDefault,
-                          NULL,
-                          WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_WANTRETURN,
-                          WS_EX_CLIENTEDGE);
+    mSource.Create(
+              mTabView,
+              rcDefault,
+              NULL,
+              WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_WANTRETURN,
+              WS_EX_CLIENTEDGE);
     mSource.SetFont(AtlGetStockFont(SYSTEM_FIXED_FONT));
-    mTabView.AddPage(mD2.m_hWnd, _T("Source"));
+    mTabView.AddPage(mSource, _T("Source"));
 
     mTabView.SetActivePage(1);
 
