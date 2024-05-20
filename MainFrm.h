@@ -114,7 +114,7 @@ public:
     //
 
     mCmdBar.LoadImages(IDR_MAINFRAME);
-    
+
     //
     // Remove old menu.
     //
@@ -288,7 +288,7 @@ public:
 
   void OnAppAbout(UINT uNotifyCode, int nID, CWindow wndCtl)
   {
-    CAboutDlg dlg;
+    CSimpleDialog<IDD_ABOUTBOX> dlg;
     dlg.DoModal();
   } // OnAppAbout
 
