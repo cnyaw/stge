@@ -55,12 +55,12 @@ public:
 
   enum { FPS = 60 };
 
-  DWORD mNextTime;
   float mDepth;
 
   stge::ScriptManager mScm;
   MyObjectManager mOm;
   stge::Object mPlayer;
+  sw2::FpsHelper mFps;
 
   CStgeView()
   {
@@ -91,7 +91,7 @@ public:
 
     RedrawWindow();
 
-    ::Sleep(TimeLeft());
+    mFps.wait();
 
     return FALSE;
   } // OnIdle
@@ -108,6 +108,7 @@ public:
 
   int OnCreate(LPCREATESTRUCT lpCreateStruct)
   {
+    mFps.start(FPS);
     mBounding = sw2::RECT_t<int>(-200,-200,200,200);
 
     mOutterBounding = mBounding;
@@ -123,7 +124,6 @@ public:
     ATLASSERT(pLoop != NULL);
 
     if (bShow) {
-      mNextTime = ::GetTickCount() + (int)(1000/(float)FPS);
       pLoop->AddIdleHandler(this);
     } else {
       pLoop->RemoveIdleHandler(this);
@@ -322,18 +322,4 @@ public:
       DrawChar(str[i]);
     }
   } // DrawString
-
-  DWORD TimeLeft()
-  {
-    DWORD now = ::GetTickCount();
-
-    DWORD left = 0;
-    if (mNextTime > now) {
-      left = mNextTime - now;
-    }
-
-    mNextTime += (int)(1000/(float)FPS);
-
-    return left;
-  } // TimeLeft
 };
