@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<!--2021/9/18 Waync Cheng-->
+</head>
+<body>
+<div style="float:left;width:400px;padding-right:8px;">
+<div>
+  <canvas id="canvas" style="border:black 1px solid" width=400 height=400 oncontextmenu="event.preventDefault()"></canvas>
+</div>
+<div>
+  <select id="scripts">
+  </select>
+  <button onclick="runScript()">Run</button>
+</div>
+</div>
+<div style="float:left;width:400px;">
+  <textarea id="code" style="width:100%;height:400px">script start
+  speed(100)
+  fire()
+end</textarea>
+  <button onclick="parseScript()">Parse</button>
+</div>
+<script>
+var stge = null;
+function ongameload() {
+  var canvas = document.getElementById('canvas');
+  stge = new stge_module(canvas);
+}
+
+function parseScript() {
+  var code = document.getElementById('code').value;
+  if (stge.parse(code)) {
+    var names = stge.getScripts();
+    var scripts = document.getElementById('scripts');
+    scripts.innerHTML = '';
+    for (var i = 0; i < names.length; i++) {
+      var c = document.createElement('option');
+      c.text = names[i];
+      scripts.options.add(c);
+    }
+  }
+}
+
+function runScript() {
+  var script = document.getElementById('scripts').value;
+  stge.run(script);
+}
+</script>
+<script src="a.out.js"></script>
+<script src="stge.js"></script>
+</body></html>

@@ -1,0 +1,1 @@
+emcc -O2 -DNDEBUG -s DISABLE_EXCEPTION_CATCHING=0 -I../../../open/yard-1.5 -I../../smallworld2/include main.cpp -sEXPORTED_RUNTIME_METHODS=ccall
