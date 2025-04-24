@@ -32,6 +32,8 @@
 // stge.
 //
 
+namespace stge {
+
 enum STGE_CONTEXT_VALUE
 {
   DIRECTION = 0,
@@ -48,6 +50,8 @@ struct Context
   float *val[NUM_VAL];                  // dir, spd, x, y.
   int w, h;                             // Window w/h.
 };
+
+}
 
 #include "math.h"
 #include "exp.h"
