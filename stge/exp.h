@@ -14,28 +14,6 @@ class Expression
 {
 public:
 
-  class Exception : public std::exception
-  {
-  public:
-
-    Exception(std::string const& exp, std::string const& s, std::string::size_type p) throw () : pos(p)
-    {
-      str = std::string("\"") + exp + std::string("\" ") + s;
-    }
-
-    virtual ~Exception() throw ()
-    {
-    }
-
-    virtual const char * what() const throw()
-    {
-      return str.c_str();
-    }
-
-    std::string::size_type pos;
-    std::string str;
-  };
-
   Expression(std::string const& str, Context const& c) : exp(str), ctx(c)
   {
   }
@@ -114,7 +92,7 @@ private:
       return (float)ctx.h;
 
     default:
-      throw Exception(exp, "funcion or name expected", p);
+      SW2_TRACE_ERROR("\"%s\":%d funcion or name expected", exp.c_str(), (int)p);
     }
 
     return 0.0f;
@@ -194,10 +172,6 @@ private:
 
   std::string getName()
   {
-    if (!::isalpha(c) && '$' != c) {
-      throw Exception(exp, "Token name expected", p);
-    }
-
     std::string name;
     while (::isalnum(c) || '$' == c) {
       name += c;
@@ -213,7 +187,8 @@ private:
   float getNumber()                     // Read a number.
   {
     if (!::isdigit(c) && '.' != c) {
-      throw Exception(exp, "Number expected", p);
+      SW2_TRACE_ERROR("\"%s\":%d Number expected", exp.c_str(), (int)p);
+      return .0f;
     }
 
     char* ps = NULL;
@@ -240,7 +215,8 @@ private:
   void match(std::string::value_type c_) // Check is the char maths the expected char.
   {
     if (c != c_) {
-      throw Exception(exp, std::string() + c_ + " expected", p);
+      SW2_TRACE_ERROR("\"%s\":%d '%c' expected", exp.c_str(), (int)p, c_);
+      return;
     }
 
     skipWhites();
